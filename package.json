@@ -1,0 +1,15 @@
+{
+  "name": "advent-of-code-2025",
+  "version": "1.0.0",
+  "description": "Advent of Code solutions",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "day": "node run.js"
+  },
+  "keywords": ["advent-of-code"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}
