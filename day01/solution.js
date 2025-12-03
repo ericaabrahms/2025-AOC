@@ -1,12 +1,32 @@
+export const part2_v2 = (input) => {
+  const lines = input.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+  let timesPassedZero = 0;
+  let val = 50;
+  for (const line of lines) {
+    const op = line[0] === 'L' ? -1 : 1;
+    const steps = parseInt(line.slice(1));
+    for (let i = 0; i < steps; i++) {
+      if (val === -1) val = 99;
+      val += op;
+      if (val === 100) val = 0;
+      if (val === 0) timesPassedZero++;
+    }
+  }
+  return timesPassedZero;
+};
 // Day 1 Solution
 
 function parseLine(line) {
-    return (line[0] == 'L' ? -1 : 1) * parseInt(line.slice(1))
+  line = line.trim();
+  if (line[0] != 'L' && line[0] != 'R') {
+    throw new Error(`Invalid line: ${line}`);
+  }
+  return (line[0] == 'L' ? -1 : 1) * parseInt(line.slice(1))
 }
 
 export const day01 = {
   part1: (input) => {
-    const lines = input.split('\n').filter(line => line.length > 0);
+    const lines = input.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     const startingIndex = 50;
     let currentIndex = startingIndex;
     let zeroCounter = 0;
@@ -21,7 +41,7 @@ export const day01 = {
   }, 
 
   part2: (input) => {
-    const lines = input.split('\n').filter(line => line.length > 0);
+    const lines = input.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     const startingIndex = 50;
     let currentIndex = startingIndex;
     let zeroCounter = 0;
@@ -57,13 +77,23 @@ export const day01 = {
 };
 
 // For testing with sample data
-const sampleInput = `sample
-input
-here`;
+
+
+import fs from 'fs';
+import path from 'path';
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   // Run directly with: node day01/solution.js
-  console.log('=== Day 1 Sample Test ===');
-  console.log('Part 1:', day01.part1(sampleInput));
-  console.log('Part 2:', day01.part2(sampleInput));
+  const inputPath = path.resolve(path.dirname(process.argv[1]), 'input.txt');
+  let input = '';
+  try {
+    input = fs.readFileSync(inputPath, 'utf-8');
+  } catch (err) {
+    console.error('Could not read input.txt:', err.message);
+    process.exit(1);
+  }
+  console.log('=== Day 1 Input.txt Test ===');
+  console.log('Part 1:', day01.part1(input));
+  console.log('Part 2:', day01.part2(input));
+  console.log('Part 2 v2:', part2_v2(input));
 }
