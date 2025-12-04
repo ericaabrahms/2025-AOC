@@ -51,27 +51,29 @@ export const day01 = {
         const tempCode = currentIndex + code
 
         if (code % 100) {
-            const landsOnZero = !((100 + tempCode) % 100)
-            const goesNegative = currentIndex && (tempCode % 100 !== (100 + tempCode) % 100)
-            const goesPositive = tempCode > 99
-    
+            // Check if partial movement (code % 100) crosses or lands on zero
+            const partialEnd = currentIndex + (code % 100);
+            const landsOnZero = partialEnd === 0 || partialEnd === 100;
+            const goesNegative = currentIndex > 0 && partialEnd < 0;
+            const goesPositive = partialEnd > 99;
+
             if (landsOnZero || goesNegative || goesPositive) {
                 zeroCounter++
             }
-        } 
+        }
 
 
         const hundos = Math.abs(parseInt(code / 100))
-        zeroCounter += hundos; 
+        zeroCounter += hundos;
 
-        // set the code 
-        currentIndex = (100 + tempCode) % 100
+        // set the code - use double modulo to handle negative numbers in JS
+        currentIndex = ((tempCode % 100) + 100) % 100
     })
 
-    
+
     // Your solution here
     console.log('Processing', lines.length, 'lines');
-    
+
     return zeroCounter;
   }
 };
