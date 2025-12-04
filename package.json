@@ -1,15 +1,22 @@
 {
-  "name": "advent-of-code-2025",
+  "name": "advent-of-code-2024",
   "version": "1.0.0",
   "description": "Advent of Code solutions",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "day": "node run.js"
+    "day": "node run.js",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:watch": "vitest --watch"
   },
-  "keywords": ["advent-of-code"],
+  "keywords": [
+    "advent-of-code"
+  ],
   "author": "",
   "license": "MIT",
-  "dependencies": {}
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  }
 }
