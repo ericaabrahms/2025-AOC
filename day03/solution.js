@@ -1,18 +1,9 @@
-// Day 2 Solution
-
-function parseInput(input) {
-  return input.split(',') .map(range => {
-    return range.split('-').map(num => parseInt(num))
-  })
-}
-
+// Day 3 Solution
 
 export const day03 = {
   findBiggestTwoDigitNumber: (numberString) => {
-    let numbers = { '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '0': 0 }
-
     let digits = numberString.split('').reduce((acc, currVal, currIndex, arr) => {
-      let num = numbers[currVal]
+      let num = parseInt(currVal)
       if (currIndex <= arr.length - 2 && num > acc.big) {
         acc.big = num;
         acc.small = 0
@@ -24,14 +15,11 @@ export const day03 = {
 
     }, {big: 0, small: 0})
 
-    return (digits.big * 10) + digits.small
-
+    return (digits.big * 10) + digits.small;
   },
   findBiggestMultiDigitNumber: (numberString, totalDigits = 12 ) => {
-    let numbers = { '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '0': 0 }
-
     let digits = numberString.split('').reduce((acc, currVal, currIndex, arr) => {
-      let num = numbers[currVal]
+      let num = parseInt(currVal)
       for (let i = 0; i < totalDigits; i++) {
         const furthestLeftDigitCanBe = (arr.length - totalDigits) + i;
 
@@ -44,7 +32,7 @@ export const day03 = {
       return acc
 
     }, [])
-    
+
     // turn the array into a string and then parseInt instead of doing math
     return parseInt(digits.reduce((acc, d) => { return acc + d}, ''))
   },

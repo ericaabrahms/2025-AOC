@@ -24,13 +24,11 @@ export const day02 = {
     for (let numberOfSegments = 2; numberOfSegments <= numberOfDigits; numberOfSegments++) {
       if (!(numberOfDigits % numberOfSegments)) {
         const digitsPerSegment = numberOfDigits / numberOfSegments;
-        const segments = []
         let firstSegment
 
         for (let seg = 0; seg < numberOfSegments; seg++) {
             const cutoffDigit = seg * digitsPerSegment // exclusive (10s place = 2, 100s place = 3)
             const startingDigit = (seg + 1) * digitsPerSegment // inclusive (10s place = 2, 100s place = 3)
-            segments.push(Math.floor(( num % 10 ** startingDigit) / 10 ** cutoffDigit));
             let segment = Math.floor(( num % 10 ** startingDigit) / 10 ** cutoffDigit)
 
             if (seg === 0) { firstSegment = segment }
