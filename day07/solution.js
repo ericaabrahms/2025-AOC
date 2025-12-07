@@ -35,25 +35,31 @@ export const day07 = {
     const rows = input.split('\n').map(row => row.split(''));
     const startingIndex = rows[0].indexOf('S');
     
-    let tachyonBeamIndices = [startingIndex];
+    let tachyonBeamIndices = {};
+    tachyonBeamIndices[startingIndex] = 1;
 
     for (let i = 1; i < rows.length/2; i++) {
-      let row = rows[i * 2]
-      const newBeamIndices = [];
+      let row = rows[i * 2];
+      const newBeamIndices = {};
 
-      tachyonBeamIndices.forEach(beamIndex => {
+      for (const beamIndex in tachyonBeamIndices) {
+        const beamCount = tachyonBeamIndices[beamIndex];
         if (row[beamIndex] === '^') {
-          newBeamIndices.push(parseInt(beamIndex) - 1)
-          newBeamIndices.push(parseInt(beamIndex) + 1)
+          newBeamIndices[parseInt(beamIndex) - 1] = (newBeamIndices[parseInt(beamIndex) - 1] || 0) + beamCount;
+          newBeamIndices[parseInt(beamIndex) + 1] = (newBeamIndices[parseInt(beamIndex) + 1] || 0) + beamCount;
         } else {
-          newBeamIndices.push(beamIndex);
+          newBeamIndices[beamIndex] = (newBeamIndices[beamIndex] || 0) + beamCount;
         }
-      })
+      }
       
       tachyonBeamIndices = newBeamIndices;
-      
     }
 
-    return tachyonBeamIndices.length;
+    let totalBeams = 0;
+    for (const beamIndex in tachyonBeamIndices) {
+      totalBeams += tachyonBeamIndices[beamIndex];
+    }
+
+    return totalBeams;
   }
 };
