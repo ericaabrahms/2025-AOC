@@ -22,37 +22,56 @@ export const day08 = {
   },
   addConnectionToCircuit: (connection, circuits) => {
 
-    let firstMatchingCircuit = circuits.find(c => {return c.includes(connection.a) || c.includes(connection.b)})
-    console.log(1, firstMatchingCircuit)
-    // let lastMatchingCircuit = circuits.findLast(c => {return c.includes(connection.a) || c.includes(connection.b)})
-    if ( firstMatchingCircuit ) {
-      // firstMatchingCircuit.push(connection.a).push(connection.b);
-    } else {
-      circuits.push([connection.a, connection.b])
-    }
 
+    const firstMatchingCircuit = circuits.find(c => {return c.has(connection.a) || c.has(connection.b)})
+    if ( firstMatchingCircuit ) {
+      firstMatchingCircuit.add(connection.a);
+      firstMatchingCircuit.add(connection.b);
+
+      const lastMatchingCircuit = circuits.findLast(c => {return c.has(connection.a) || c.has(connection.b)});
+      if (firstMatchingCircuit !== lastMatchingCircuit) {
+        lastMatchingCircuit.forEach(item => {
+          firstMatchingCircuit.add(item);
+        })
+        circuits.splice(circuits.indexOf(lastMatchingCircuit), 1);
+      }
+
+    } else {
+      circuits.push(new Set([connection.a, connection.b]))
+    }
     return circuits;
   },
   part1: (input, numberOfConnections = 1000) => {
     let coordinates = input.split('\n'); 
     let circuits = [];
 
-    const connections = getConnectionDistancesFromCoordinatePairs(coordinates);
-
-    console.log(connections[0])
-    connections.sort((a, b) => a.distance - b.distance).splice(numberOfConnections)
-    console.log(connections[0])
-    console.log(connections[2])
-    day08.addConnectionToCircuit(connections[0], circuits)
-    day08.addConnectionToCircuit(connections[2], circuits)
-    console.log(circuits)
-
+    const connections = day08.getConnectionDistancesFromCoordinatePairs(coordinates);
+    connections.sort((a, b) => a.distance - b.distance).splice(numberOfConnections);
+    connections.forEach(c => day08.addConnectionToCircuit(c, circuits));
     
-    return 0;
+    circuits.sort((a, b) => -(a.size - b.size))
+
+    return circuits[0].size * circuits[1].size * circuits[2].size
   }, 
   part2: (input) => {
-    let totalBeams = 0;
-    return totalBeams;
+    let coordinates = input.split('\n'); 
+    let circuits = [];
+
+    const connections = day08.getConnectionDistancesFromCoordinatePairs(coordinates)
+      .sort((a, b) => a.distance - b.distance);
+
+    for (let i = 0; i < connections.length; i++) {
+      let connection = connections[i];
+      day08.addConnectionToCircuit(connection, circuits);
+      if (circuits[0].size === coordinates.length) {
+        const aX = parseInt(connection.a.split(',')[0]);
+        const bX = parseInt(connection.b.split(',')[0]);
+
+        return aX * bX;
+      }
+    }
+    
+    return 0;
   }
 };
                        

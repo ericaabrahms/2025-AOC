@@ -18,28 +18,46 @@ describe('day08', () => {
             expect(result.length).toBe(3);
         })
     })
-    describe.skip('addConnectionToCircuit', () => {
+    describe('addConnectionToCircuit', () => {
         it('adds to Empty Circuit', () => {
-            const circuit = [];
-            const connection = {a: [1, 1, 1], b: [0, 0, 0], distance: 1.67}
-            const result = day08.addConnectionToCircuit(connection, circuit);
-            expect(result[0]).toContainEqual(connection.a)
-            expect(result[0]).toContainEqual(connection.b)
-            expect(result[0].length).toBe(2)
+            const circuits = [];
+            const connection = {a: '1,1,1', b: '0,0,0', distance: 1.67}
+            const result = day08.addConnectionToCircuit(connection, circuits);
+            expect(circuits[0]).toContainEqual(connection.a)
+            expect(circuits[0]).toContainEqual(connection.b)
+            expect(circuits[0].size).toBe(2)
             expect(result.length).toBe(1)
         })
         it('adds to existing circuit', () => {
-            const circuit = [[[1, 1, 1], [2, 2, 2]]];
-            const connection = {a: [1, 1, 1], b: [0, 0, 0], distance: 1.67}
-            const result = day08.addConnectionToCircuit(connection, circuit);
-            expect(result[0]).toContainEqual(connection.a)
-            expect(result[0]).toContainEqual(connection.b)
-            expect(result[0].length).toBe(2)
-            expect(result.length).toBe(1)
+            const circuits = [new Set(['1,1,1', '2,2,2'])];
+            const connection = {a: '1,1,1', b: '0,0,0', distance: 1.67}
+            day08.addConnectionToCircuit(connection, circuits);
+            expect(circuits[0]).toContainEqual(connection.a)
+            expect(circuits[0]).toContainEqual(connection.b)
+            expect(circuits[0].size).toBe(3)
+            expect(circuits.length).toBe(1)
+        })
+        it('adds new circuit', () => {
+            const circuits = [new Set(['1,1,1', '2,2,2'])];
+            const connection = {a: '3,3,3', b: '0,0,0', distance: 1.67}
+            day08.addConnectionToCircuit(connection, circuits);
+            expect(circuits[1]).toContainEqual(connection.a)
+            expect(circuits[1]).toContainEqual(connection.b)
+            expect(circuits[1].size).toBe(2)
+            expect(circuits.length).toBe(2)
+        })
+        it('adds bridge circuit', () => {
+            const circuits = [new Set(['1,1,1', '2,2,2']), new Set(['0,0,0', '3,3,3'])];
+            const connection = {a: '3,3,3', b: '2,2,2', distance: 1.67}
+            day08.addConnectionToCircuit(connection, circuits);
+            expect(circuits[0]).toContainEqual(connection.a)
+            expect(circuits[0]).toContainEqual(connection.b)
+            expect(circuits[0].size).toBe(4)
+            expect(circuits.length).toBe(1)
         })
     });
 
-    describe.skip('part1', () => {
+    describe('part1', () => {
         it('provided input', () => {
             const input = `162,817,812
 57,618,57
@@ -65,7 +83,7 @@ describe('day08', () => {
             
         });
     });
-    describe.skip('part2', () => {
+    describe('part2', () => {
         it('provided input', () => {
             const input = `162,817,812
 57,618,57
@@ -87,7 +105,7 @@ describe('day08', () => {
 862,61,35
 984,92,344
 425,690,689`;
-            expect(day08.part2(input)).toBe(40)
+            expect(day08.part2(input)).toBe(25272)
         });
     });
 });
