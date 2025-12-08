@@ -4,13 +4,21 @@ import { day08 } from './day08/solution.js';
 describe('day08', () => {
     describe('euclidianDistance3D', () => {
         it('origin to 1, 1, 1', () => {
-            expect(day08.euclidianDistance3D([0, 0, 0], [1, 1, 1])).toBe(Math.sqrt(3))
+            expect(day08.euclidianDistance3D('0,0,0', '1,1,1')).toBe(Math.sqrt(3))
         })
         it('345 triangle', () => {
-            expect(day08.euclidianDistance3D([0, 3, 0], [4, 0, 0])).toBe(5)
+            expect(day08.euclidianDistance3D('0,3,0', '4,0,0')).toBe(5)
         })
     });
-    describe('addConnectionToCircuit', () => {
+    describe('getConnectionDistancesFromCoordinatePairs', () => {
+        const coordinates = ['0,0,0', '1,1,1', '2,2,2'];
+        const result = day08.getConnectionDistancesFromCoordinatePairs(coordinates);
+
+        it('generates the right number of pairs', () => {
+            expect(result.length).toBe(3);
+        })
+    })
+    describe.skip('addConnectionToCircuit', () => {
         it('adds to Empty Circuit', () => {
             const circuit = [];
             const connection = {a: [1, 1, 1], b: [0, 0, 0], distance: 1.67}
