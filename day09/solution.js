@@ -23,8 +23,8 @@ export const day09 = {
 
   }, 
   part2: (input) => {
-    let redSquares = input.split('\n').map(sq => sq.split(',').map(s => parseInt(s))); 
-    const theMap = day09.makeMap(redSquares);
+    let redSquares = input.split('\n').map(sq => sq.split(',').map(s => parseInt(s)));
+    const mapData = day09.makeMap(redSquares);
 
     let rectangles = [];
 
@@ -42,9 +42,9 @@ export const day09 = {
     }
 
     rectangles.sort((a, b) => -(a.area - b.area));
-    
+
     for (let l = 0; l < rectangles.length; l++) {
-      if (day09.isRectangleInsideBoundaries(rectangles[l], theMap)) {
+      if (day09.isRectangleInsideBoundaries(rectangles[l], mapData)) {
         return rectangles[l].area;
       }
     }
@@ -53,12 +53,30 @@ export const day09 = {
   },
   makeMap: (redSquares) => {
     let rows = [];
+    const rowBounds = {}; // For each row y: {min: minX, max: maxX}
+    const colBounds = {}; // For each col x: {min: minY, max: maxY}
 
     function addBoundaryMarker(x, y) {
       if (!rows[y]) {
         rows[y] = [];
       }
       rows[y][x] = "#"
+
+      // Update row bounds
+      if (!rowBounds[y]) {
+        rowBounds[y] = {min: x, max: x};
+      } else {
+        rowBounds[y].min = Math.min(rowBounds[y].min, x);
+        rowBounds[y].max = Math.max(rowBounds[y].max, x);
+      }
+
+      // Update col bounds
+      if (!colBounds[x]) {
+        colBounds[x] = {min: y, max: y};
+      } else {
+        colBounds[x].min = Math.min(colBounds[x].min, y);
+        colBounds[x].max = Math.max(colBounds[x].max, y);
+      }
     }
 
     for (let i = 0; i < redSquares.length; i++) {
@@ -86,69 +104,78 @@ export const day09 = {
       }
     }
 
-    return rows;
+    return {rows, rowBounds, colBounds};
   },
-  isRectangleInsideBoundaries: (rectangle, theMap) => {
+  isRectangleInsideBoundaries: (rectangle, mapData) => {
     const {a: [ax, ay], b: [bx, by]} = rectangle;
-    return day09.isPointInsideBoundaries(ax, by, theMap) && day09.isPointInsideBoundaries(bx, ay, theMap);
-  },
-  isPointInsideBoundaries: (x, y, theMap) => {
-    const firstInRow = theMap[y].indexOf('#');
-    let xIsInBounds, yIsInBounds;
+    const {rowBounds, colBounds} = mapData;
 
-    if (x >= firstInRow) {
-      const lastInRow = theMap[y].lastIndexOf('#');
+    const minX = Math.min(ax, bx);
+    const maxX = Math.max(ax, bx);
+    const minY = Math.min(ay, by);
+    const maxY = Math.max(ay, by);
 
-      if (x <= lastInRow) {
-        xIsInBounds = true;
-      } else {
+    // For each row in the rectangle, check if minX to maxX stays within bounds
+    for (let y = minY; y <= maxY; y++) {
+      if (!rowBounds[y] || minX < rowBounds[y].min || maxX > rowBounds[y].max) {
         return false;
       }
     }
 
+    // For each column in the rectangle, check if minY to maxY stays within bounds
+    for (let x = minX; x <= maxX; x++) {
+      if (!colBounds[x] || minY < colBounds[x].min || maxY > colBounds[x].max) {
+        return false;
+      }
+    }
 
-    // const firstInCol = theMap.findIndex(row => row[x] === '#');
-    
-
-    // if (y >= firstInCol) {
-    //   const lastInCol = theMap.findLastIndex(row => row[x] === '#');
-
-    //   if (y <= lastInCol) {
-    //     yIsInBounds = true;
-    //   } else return false;
-    // }
-
-    return xIsInBounds;
+    return true;
   },
-  xpart2: (input) => {
-    let redSquares = input.split('\n').map(sq => sq.split(',')); 
-    let boundaries = day09.drawBoundaries(redSquares);
-    let rectangles = [];
+  isPointInside: (x, y, rows, rowBounds, colBounds) => {
+    // On boundary?
+    if (rows[y] && rows[y][x] === '#') return true;
 
-    for (let i = 0; i < redSquares.length; i++) {
-      const a = redSquares[i];
-
-      for (let j = i + 1; j < redSquares.length; j++) {
-        const b = redSquares[j];
-
-        const x = Math.abs((a[0] - b[0])) + 1
-        const y = Math.abs((a[1] - b[1])) + 1
-        const area = x * y
-        rectangles.push({a, b, area})
-      }
+    // Within row bounds?
+    if (!rowBounds[y] || x < rowBounds[y].min || x > rowBounds[y].max) {
+      return false;
     }
 
-    rectangles.sort((a, b) => -(a.area - b.area));
-
-    for (let i = 0; i < rectangles.length; i++) {
-      let rectangle = rectangles[i]
-      if (day09.isInsideBoundaries(rectangle, boundaries)) {
-        return rectangle.area;
-      }
+    // Within col bounds?
+    if (!colBounds[x] || y < colBounds[x].min || y > colBounds[x].max) {
+      return false;
     }
 
-    return 0;
-  }, 
+    return true;
+  },
+  // xpart2: (input) => {
+  //   let redSquares = input.split('\n').map(sq => sq.split(',')); 
+  //   let boundaries = day09.drawBoundaries(redSquares);
+  //   let rectangles = [];
+
+  //   for (let i = 0; i < redSquares.length; i++) {
+  //     const a = redSquares[i];
+
+  //     for (let j = i + 1; j < redSquares.length; j++) {
+  //       const b = redSquares[j];
+
+  //       const x = Math.abs((a[0] - b[0])) + 1
+  //       const y = Math.abs((a[1] - b[1])) + 1
+  //       const area = x * y
+  //       rectangles.push({a, b, area})
+  //     }
+  //   }
+
+  //   rectangles.sort((a, b) => -(a.area - b.area));
+
+  //   for (let i = 0; i < rectangles.length; i++) {
+  //     let rectangle = rectangles[i]
+  //     if (day09.isInsideBoundaries(rectangle, boundaries)) {
+  //       return rectangle.area;
+  //     }
+  //   }
+
+  //   return 0;
+  // }, 
   drawBoundaries: (redSquares) => {
     const boundaries = {x:[], y:[]};
 
